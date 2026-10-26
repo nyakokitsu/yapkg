@@ -754,6 +754,32 @@
       "url": "https://raw.githubusercontent.com/nyakokitsu/yapkg/packages/packages/soloist-lite1/1.0.2.yap"
     },
     {
+      "id": "soloist-lite1",
+      "version": "1.0.3",
+      "name": "Spotify Soloist (Lite 1)",
+      "description": "Spotify Connect for Yandex Station Lite 1 with Alice voice search and controls",
+      "sha256": "1a1cd8face83a12ff24d32c83e545cad36af732ab10eb08f3e23b1323f29a84c",
+      "models": [],
+      "features": [
+        "audio.volume.alsa"
+      ],
+      "target": "any",
+      "url": "https://raw.githubusercontent.com/nyakokitsu/yapkg/packages/packages/soloist-lite1/1.0.3.yap"
+    },
+    {
+      "id": "soloist-lite1",
+      "version": "1.0.4",
+      "name": "Spotify Soloist (Lite 1)",
+      "description": "Spotify Connect for Yandex Station Lite 1 with Alice voice search and controls",
+      "sha256": "90a17b97b4904b9776f1563d34cd04815f84e88af6ff9ec4ddfaf9fe010991a4",
+      "models": [],
+      "features": [
+        "audio.volume.alsa"
+      ],
+      "target": "any",
+      "url": "https://raw.githubusercontent.com/nyakokitsu/yapkg/packages/packages/soloist-lite1/1.0.4.yap"
+    },
+    {
       "id": "sqlite",
       "version": "3.45.3",
       "name": "sqlite",
@@ -1073,7 +1099,7 @@
     "rsync": "3.4.3",
     "sd": "1.0.0",
     "socat": "1.8.0",
-    "soloist-lite1": "1.0.2",
+    "soloist-lite1": "1.0.4",
     "sqlite": "3.45.3",
     "sshpass": "1.10",
     "station-airplay": "1.4.0",

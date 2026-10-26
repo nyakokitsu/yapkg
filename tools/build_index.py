@@ -66,16 +66,34 @@ def version_key(version: str) -> tuple:
     return numbers, 1 if not separator else 0, suffix
 
 
+def string_list(value: object, name: str, relative: Path) -> list[str]:
+    if value is None:
+        return []
+    if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
+        raise ValueError(f"{relative}: compatibility.{name} must be an array of non-empty strings")
+    if len(value) != len(set(value)):
+        raise ValueError(f"{relative}: compatibility.{name} contains duplicates")
+    return value
+
+
 def build(packages_dir: Path, base_url: str) -> dict:
     packages = []
     if not packages_dir.exists():
-        return {"format": 2, "packages": packages, "latest": {}}
+        return {"format": 3, "packages": packages, "latest": {}}
+    targets: set[tuple[str, str, str]] = set()
     for archive in sorted(packages_dir.rglob("*.yap")):
         relative = archive.relative_to(packages_dir)
-        if len(relative.parts) != 2:
-            raise ValueError(f"{relative}: expected <id>/<version>.yap")
-        package_id, filename = relative.parts
-        version = archive.stem
+        if len(relative.parts) == 2:
+            package_id, filename = relative.parts
+            version = archive.stem
+            target = "any"
+        elif len(relative.parts) == 3:
+            package_id, version, filename = relative.parts
+            target = archive.stem
+            if not ID_RE.fullmatch(target):
+                raise ValueError(f"{relative}: invalid target name")
+        else:
+            raise ValueError(f"{relative}: expected <id>/<version>.yap or <id>/<version>/<target>.yap")
         if not ID_RE.fullmatch(package_id):
             raise ValueError(f"{relative}: invalid package ID")
         if not VERSION_RE.fullmatch(version):
@@ -89,6 +107,19 @@ def build(packages_dir: Path, base_url: str) -> dict:
         entry = manifest.get("entry")
         if not isinstance(entry, str) or not safe_name(entry):
             raise ValueError(f"{relative}: invalid plugin entry")
+        compatibility = manifest.get("compatibility", {})
+        if not isinstance(compatibility, dict):
+            raise ValueError(f"{relative}: compatibility must be a table")
+        models = string_list(compatibility.get("models"), "models", relative)
+        features = string_list(compatibility.get("features"), "features", relative)
+        if target != "any" and target not in models:
+            raise ValueError(f"{relative}: target {target!r} must be listed in compatibility.models")
+        target_models = models or ["*"]
+        for model in target_models:
+            key = (package_id, version, model)
+            if key in targets:
+                raise ValueError(f"{relative}: duplicate build for {package_id} {version} target {model}")
+            targets.add(key)
         digest = hashlib.sha256(archive.read_bytes()).hexdigest()
         packages.append({
             "id": package_id,
@@ -96,13 +127,16 @@ def build(packages_dir: Path, base_url: str) -> dict:
             "name": manifest.get("name", package_id),
             "description": manifest.get("description", ""),
             "sha256": digest,
-            "url": f"{base_url.rstrip('/')}/{package_id}/{version}.yap",
+            "models": models,
+            "features": features,
+            "target": target,
+            "url": f"{base_url.rstrip('/')}/{relative.as_posix()}",
         })
     packages.sort(key=lambda package: (package["id"], version_key(package["version"])))
     latest = {}
     for package in packages:
         latest[package["id"]] = package["version"]
-    return {"format": 2, "packages": packages, "latest": latest}
+    return {"format": 3, "packages": packages, "latest": latest}
 
 
 def main() -> int:

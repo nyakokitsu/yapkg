@@ -58,6 +58,14 @@
       "url": "https://raw.githubusercontent.com/nyakokitsu/yapkg/packages/packages/btop/1.4.7.yap"
     },
     {
+      "id": "cuberite",
+      "version": "1.0.0",
+      "name": "Cuberite (Minecraft 1.12.2)",
+      "description": "Minecraft Java server (clients 1.8 - 1.14.4, best 1.12.2) on port 25565. Worlds live in /data/cuberite and survive package updates. Green ring = a player is online.",
+      "sha256": "43ace1a172f9fc63f631c38df18db3d6a8f3c96abf4d0320e18eeb69982e04fe",
+      "url": "https://raw.githubusercontent.com/nyakokitsu/yapkg/packages/packages/cuberite/1.0.0.yap"
+    },
+    {
       "id": "curl",
       "version": "8.14.1",
       "name": "curl",
@@ -610,6 +618,7 @@
     "bat": "0.24.0",
     "bottom": "0.9.6",
     "btop": "1.4.7",
+    "cuberite": "1.0.0",
     "curl": "8.14.1",
     "darkhttpd": "1.16",
     "delta": "0.17.0",
